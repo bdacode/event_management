@@ -1,0 +1,26 @@
+<H1>Hey Hey</H1>
+
+
+<%= link_to "Sign in with Google", user_omniauth_authorize_path(:google_oauth2) %>
+<%= link_to "Sign in with Facebook", user_omniauth_authorize_path(:facebook) %>
+
+<%= debug @auth %>
+<%#= debug @result.data %>
+<%= link_to "New Event", new_event_path %>
+<div id="events">
+  <h2 id="month">
+    <%= link_to "<", date: @date.prev_month %>
+    <%= @date.strftime("%B %Y") %>
+    <%= link_to ">", date: @date.next_month %>
+  </h2>
+  <%= calendar @date do |date| %>
+    <%= date.day %>
+    <% if @events_by_date[date] %>
+      <ul>
+        <% @events_by_date[date].each do |event| %>
+          <li><%= link_to event.summary, event %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+</div>

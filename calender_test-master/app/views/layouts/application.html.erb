@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OauthTesting</title>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <% if current_user %>
+    Signed in as <%= current_user.email %>!
+    <%= link_to "Sign Out", destroy_user_session_path, method: :delete %>
+  <% else %>
+    <%= link_to "Sign in with Google", user_omniauth_authorize_path(:google_oauth2) %>
+  <% end %>
+ <p class="notice"><%= notice %></p>
+ <p class="alert"><%= alert %></p>
+<%= yield %>
+
+</body>
+</html>
