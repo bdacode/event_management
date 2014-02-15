@@ -2,9 +2,15 @@ OauthTesting::Application.routes.draw do
   devise_for :users, path_names: {sign_in: "login", sign_out: "logout"},
                      controllers: {omniauth_callbacks: "omniauth_callbacks"}
 
-  resources :events
+  resources :google_calendars do
+    resources :sessions
+  end
+
+  resources :events 
+
   get "/auth/:provider/callback" => "sessions#create"
-  root "events#index"
+  # root "events#index"
+  root "google_calendars#index"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

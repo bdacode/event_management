@@ -1,0 +1,13 @@
+<%#= form_for @calendars.each do |c| %>
+  <%#= f.select :calendar_id %>
+<%# end %>
+
+
+<% @calendars.each do |c| %>
+  <%= c.calendar_id %><br>
+  <%= c.summary %><br>
+  <%= c.kind %><br>
+  <%= c.location %><br>
+  <%= c.inspect %><br>
+
+<% end %>

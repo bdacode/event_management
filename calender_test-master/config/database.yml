@@ -1,7 +1,7 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: ideaspace2_development
+  database: calendar_exp_development
   pool: 5
   username: kellywaters
   password: 
@@ -9,7 +9,7 @@ development:
 test:
   adapter: postgresql
   encoding: unicode
-  database: ideaspace2_test
+  database: calendar_exp_test
   pool: 5
   username: kellywaters
   password: 

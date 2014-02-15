@@ -7,15 +7,89 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     @token = @auth["credentials"]["token"]
     client = Google::APIClient.new
     client.authorization.access_token = @token
+    client.authorization.client_id = @client_id
     service = client.discovered_api('calendar', 'v3')
     @result = client.execute(
       :api_method => service.calendar_list.list,
       :parameters => {},
       :headers => {'Content-Type' => 'application/json'})
 
-    Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
-    Rails.logger.info "@result: #{@result.inspect}"
-    Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+    @calendars = (JSON.parse(@result.body))["items"]
+    
+    @calendars.each do |calendar|
+      @calendar_id = calendar["id"]
+      @summary = calendar["summary"]
+      @kind = calendar["kind"]
+      @location= calendar["location"]
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info "@calendar_id: #{@calendar_id.inspect}"
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+
+      @result = client.execute(
+        :api_method => service.calendars.get,
+        :parameters => {calendarId: @calendar_id, eventID: @event_id},
+        :body => JSON.dump('summary' => 'test name'),
+        :headers => {'Content-Type' => 'application/json'})
+      
+      @calendar = GoogleCalendar.new 
+
+      @calendar.calendar_id = @calendar_id
+      @calendar.summary = @summary
+      @calendar.kind = @kind
+      @calendar.location = @location
+      
+      @calendar.save    
+
+   
+
+    @result = client.execute(:api_method => service.events.list,
+        :parameters => {calendarId: @calendar_id})
+
+      # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      # Rails.logger.info "@events: #{@events.inspect}"
+      # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+
+    @events = (JSON.parse(@result.body))["items"]
+
+    @events.each do |event|
+
+      @event_id = event["id"]
+      @summary = event["summary"]
+      
+      @start = event["start"]
+      @start = @start["date"]
+
+
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info "@start: #{@start.inspect}"
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      @end = event["end"]
+      @end = @end["date"]
+
+     
+
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      Rails.logger.info "@end: #{@end.inspect}"
+      Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+
+      @events = client.execute(:api_method => service.events.get,
+        :parameters => {calendarId: @calendar_id, eventId: @event_id})
+
+      # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      # Rails.logger.info "@events: #{@events.inspect}"
+      # Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>>>>>"
+      
+      @event = Event.new
+      @event.summary = @summary
+      @event.start = @start
+      
+      @event.end = @end
+   
+      @event.save
+
+
+    end
+  end
 
     if user.persisted?
       flash.notice = "Signed in!"
@@ -30,19 +104,3 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   alias_method :facebook, :all
 
 end
-
-# calendar_id: "tqvtctm085u4ng1nko6nggrg50@group.calendar.google.com"
-
-# client.execute( api_method: service.events.list,
-#                 :parameters => {calendarId: "tqvtctm085u4ng1nko6nggrg50@group.calendar.google.com"}, 
-#                 :headers => {'Content-Type' => 'application/json'})
-
-
-# {"kind"=>"calendar#event", "etag"=>"\"TuPKiPtcUnaxp3WU8BefUMu26Bg/MTM4OTY2Mzk2MDUwOTAwMA\"", 
-# "id"=>"_60o42gpp852jgb9p8gqj8b9k6kpjiba26gr48b9i711jch9k6d2k6chi6o", "status"=>"confirmed", 
-# "htmlLink"=>"https://www.google.com/calendar/event?eid=XzYwbzQyZ3BwODUyamdiOXA4Z3FqOGI5azZrcGppYmEyNmdyNDhiOWk3MTFqY2g5azZkMms2Y2hpNm8gdHF2dGN0bTA4NXU0bmcxbmtvNm5nZ3JnNTBAZw", 
-# "created"=>"2014-01-01T00:54:12.000Z", "updated"=>"2014-01-14T01:46:00.509Z", "summary"=>"Lab time", 
-# "creator"=>{"email"=>"123and@gmail.com", "displayName"=>"Andrew Ogryzek"}, 
-# "organizer"=>{"email"=>"tqvtctm085u4ng1nko6nggrg50@group.calendar.google.com", "displayName"=>"CodeCore", 
-#   "self"=>true}, "start"=>{"dateTime"=>"2014-02-17T16:00:00-08:00"}, "end"=>{"dateTime"=>"2014-02-18T00:00:00-08:00"}, 
-#   "iCalUID"=>"00AC9AE8-9D54-4539-B46D-28C6E43EC226", "sequence"=>1, "reminders"=>{"useDefault"=>true}} 
