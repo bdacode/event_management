@@ -1,8 +1,9 @@
 class AttendeesController < ApplicationController
 
+  # TODO: refactor to introduce form and service patterns
   def create
     @attendee            = Attendee.find_by_email(attendee_params[:email]) || Attendee.new(attendee_params)
-    begin 
+    begin
       @attendee.categories += Category.find(attendee_params[:category_ids].delete_if{|x| x.empty?} )
       @attendee.events     += Event.find(attendee_params[:event_ids])
     rescue
@@ -17,7 +18,7 @@ class AttendeesController < ApplicationController
     end
   end
 
-  
+
   private
 
   def model_validation_messages

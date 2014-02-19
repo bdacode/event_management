@@ -17,12 +17,13 @@ class Event < ActiveRecord::Base
                        path: "/image/:id/:style/:filename",
                      :default_url => 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTdsjWnPtvccjwXi18Hbab91KDKChPoWSMCF0maMUBMjSuwAKQL'
 
-  validates_attachment_size :image, less_than: 10.megabytes   
-  
+  validates_attachment_size :image, less_than: 10.megabytes
+
   scope :future_events, -> {where("date > ?",Time.now)}
 
   after_update :update_waitlist
 
+  # TODO: refactor: symmetry in method names, 1 for better name
   def confirmed_attendees
     Attendee.joins(:attendances).where("attendances.id in (?)", seat_ownerships.ids)
   end
@@ -32,19 +33,21 @@ class Event < ActiveRecord::Base
   end
 
   def seat_ownerships
-    self.attendances.with_seats
+    self.attendances.with_seats # what is a 'seat' isn't it confirmed?
   end
 
   def wait_listed
     self.attendances.waiting
   end
 
+  # TODO refactor: Intential Revealing name `validate_date_in_future`
   def date_checker
     if date.blank? || date < Date.today
       errors.add(:date, " should be filled and should be in the future.")
     end
   end
 
+  # TODO: refactor: Move to service object
   def update_waitlist
     waitlisted = self.wait_listed()
     taken = self.seat_ownerships.count()

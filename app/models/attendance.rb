@@ -5,7 +5,7 @@ class Attendance < ActiveRecord::Base
 
   before_create :waitlist_check
   after_destroy :update_event_waitlist
-  
+
   #validate :cap_check
   # def cap_check
   #   event_seats_taken=event.attendances.length
@@ -18,6 +18,7 @@ class Attendance < ActiveRecord::Base
 
   scope :waiting, -> {where("waitlisted").order('created_at ASC')}
 
+  # TODO: refactor: is this a validation not a callback?
   def waitlist_check
     event_seats_taken ||= self.event.seat_ownerships.length
     event_all_seats ||= self.event.seats
@@ -25,12 +26,14 @@ class Attendance < ActiveRecord::Base
     true
   end
 
+  # TODO: refactor: move to service object
   def change_waitlist_to_attending
     self.waitlisted=false
     self.save
     AttendeeMailer.delay.notify_waitlisted(self)
   end
 
+  # TODO: refactor: move to service object
   def update_event_waitlist
     self.event.update_waitlist
   end
