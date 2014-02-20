@@ -3,7 +3,7 @@ class Event < ActiveRecord::Base
   has_many :attendances, dependent: :destroy
   has_many :attendees, through: :attendances
   validates_numericality_of :seats
-  validate :date_checker
+  validate :validate_date_in_future
   has_attached_file  :image,
                      storage: :s3,
                      s3_protocol: "https",
@@ -40,8 +40,7 @@ class Event < ActiveRecord::Base
     self.attendances.waiting
   end
 
-  # TODO refactor: Intential Revealing name `validate_date_in_future`
-  def date_checker
+  def validate_date_in_future
     if date.blank? || date < Date.today
       errors.add(:date, " should be filled and should be in the future.")
     end
