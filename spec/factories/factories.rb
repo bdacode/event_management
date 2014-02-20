@@ -13,6 +13,10 @@ FactoryGirl.define do
   factory :attendance do
     event
     attendee
+
+    trait :waitlisted do
+      waitlisted 'true'
+    end
   end
 
   factory :category do
@@ -37,6 +41,11 @@ FactoryGirl.define do
     trait :full do
       seats 0
     end
+  end
+
+  factory :user do
+    email { generate(:email) }
+    password 'password'
   end
 
 end
