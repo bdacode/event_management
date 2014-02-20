@@ -23,21 +23,24 @@ class Event < ActiveRecord::Base
 
   after_update :update_waitlist
 
-  # TODO: refactor: symmetry in method names, 1 for better name
   def confirmed_attendees
-    Attendee.joins(:attendances).where("attendances.id in (?)", seat_ownerships.ids)
+    Attendee.joins(:attendances).where("attendances.id in (?)", confirmed_attendances.ids)
   end
 
   def waitlisted_attendees
     Attendee.joins(:attendances).where("attendances.id in (?)", wait_listed.ids)
   end
 
-  def seat_ownerships
-    self.attendances.with_seats # what is a 'seat' isn't it confirmed?
+  def confirmed_attendances
+    self.attendances.confirmed
   end
 
   def wait_listed
     self.attendances.waiting
+  end
+
+  def full?
+    seats <= self.attendances.confirmed.count
   end
 
   def validate_date_in_future
@@ -49,7 +52,7 @@ class Event < ActiveRecord::Base
   # TODO: refactor: Move to service object
   def update_waitlist
     waitlisted = self.wait_listed()
-    taken = self.seat_ownerships.count()
+    taken = confirmed_attendances.count()
     index = 0
     while seats > taken and index < waitlisted.length
       waitlisted[index].change_waitlist_to_attending()

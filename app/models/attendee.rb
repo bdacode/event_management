@@ -17,8 +17,8 @@ class Attendee < ActiveRecord::Base
     Event.joins(:attendances).where("attendances.id in (?)", wait_listed.ids)
   end
 
-  def seat_ownerships
-    self.attendances.with_seats
+  def confirmed
+    self.attendances.confirmed
   end
 
   def wait_listed

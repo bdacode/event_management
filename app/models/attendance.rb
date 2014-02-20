@@ -6,15 +6,7 @@ class Attendance < ActiveRecord::Base
   before_create :waitlist_check
   after_destroy :update_event_waitlist
 
-  #validate :cap_check
-  # def cap_check
-  #   event_seats_taken=event.attendances.length
-  #   if (event.seats <= event_seats_taken)
-  #     errors.add(:event_id," #{event.title} has been filled. Sorry!" )
-  #   end
-  # end
-
-  scope :with_seats, -> {where("NOT waitlisted or waitlisted is NULL")}
+  scope :confirmed, -> {where("NOT waitlisted or waitlisted is NULL")}
 
   scope :waiting, -> {where("waitlisted").order('created_at ASC')}
 
