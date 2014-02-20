@@ -3,20 +3,11 @@ class Attendance < ActiveRecord::Base
   belongs_to :event
   validates_uniqueness_of :attendee_id, :scope => :event_id
 
-  before_create :waitlist_check
   after_destroy :update_event_waitlist
 
   scope :confirmed, -> {where("NOT waitlisted or waitlisted is NULL")}
 
   scope :waiting, -> {where("waitlisted").order('created_at ASC')}
-
-  # TODO: refactor: is this a validation not a callback?
-  def waitlist_check
-    event_seats_taken ||= self.event.seat_ownerships.length
-    event_all_seats ||= self.event.seats
-    self.waitlisted = (event_all_seats <= event_seats_taken)
-    true
-  end
 
   # TODO: refactor: move to service object
   def change_waitlist_to_attending

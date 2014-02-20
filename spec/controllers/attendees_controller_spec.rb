@@ -34,7 +34,7 @@ describe AttendeesController do
 
     it "associates the attendee with the events and categories" do
       perform
-      attendee = assigns[:attendee]
+      attendee = Attendee.last # grab the one that was just created
       expect(attendee.events).to match_array(events)
       expect(attendee.categories).to match_array(categories)
     end
