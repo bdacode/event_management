@@ -1,12 +1,12 @@
 class AttendeesController < ApplicationController
 
   def create
-    register_service = RegistrationService::RegisterAttendee.new(attendee_params)
+    result = RegisterAttendee.call(attendee_params)
 
-    if register_service.call
+    if result.successful?
        render :create
     else
-      error_message = register_service.errors.full_messages.join(' and ')
+      error_message = result.errors.full_messages.join(' and ')
       redirect_to root_path + "#section-signup", alert: error_message
     end
   end
