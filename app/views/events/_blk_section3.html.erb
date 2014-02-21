@@ -4,23 +4,25 @@
 
           <div class="col-lg-6 col-md-6 col-sm-6 box">
             <h3 class="text-shadow upcase">Please select the events you would like to attend:</h3>
-            <%= form_for @attendee do |f| %>
+            <%= form_for @attendee_form,
+              as: :attendee,
+              url: attendees_url,
+              html: {id: 'something'} do |f| %>
+
               <div class="titles"><%= render "events/event_list_form" %></div>
+
               <%= f.label :name, class: "category" %>
               <%= f.text_field :name,  class: "form-control" %>
               <%= f.label :email, class: "category" %>
               <%= f.text_field :email,  class: "form-control" %>
               <%= f.label :company, class: "category" %>
               <%= f.text_field :company,  class: "form-control" %>
-              <br>
 
-              <%#= f.input :name, input_html: {class: "attendee-form form-group"} %>
-              <%#= f.input :email, input_html: {class: "attendee-form"} %>
-              <%#= f.input :company, input_html: {class: "attendee-form"} %>
+              <br/>
 
               <p class="titles"><%= f.check_box :mail_list %>Check this box if you like us to keep you up to date on future news and events </p>
               <p class="titles"> Please tell us about future topics you would like to learn about:</p>
-                <ul > 
+                <ul >
                   <% Category.all.each do |category| %>
 
                     <li  class="col-lg-6 col-md-6 col-sm-6"><%= hidden_field_tag "attendee[category_ids][]", nil %>
@@ -38,7 +40,7 @@
 
 
           </div>
-          
+
           <div class="col-lg-6 col-md-6 col-sm-6">
             <div class="row">
                 <div class="map center">
@@ -46,7 +48,7 @@
                           <h5 class="upcase">88 West Pender Street
                           <h5 class="upcase">Vancouver Canada
                           <h5 class="upcase">V6B 6N9
-                          
+
                 </div>
             </div>
             <div class="row">

@@ -43,6 +43,14 @@ class Event < ActiveRecord::Base
     seats <= self.attendances.confirmed.count
   end
 
+  def available_spots
+
+  end
+
+  def confirmed_spots
+    confirmed_attendances.count
+  end
+
   def validate_date_in_future
     if date.blank? || date < Date.today
       errors.add(:date, " should be filled and should be in the future.")
