@@ -1,0 +1,19 @@
+.row
+  .col-md-12
+    %h1 New Question
+    = form_for Question.new, html: {class: 'form-horizontal'} do |f|
+      .form-group
+        %label.control-label.col-md-1{for: 'question_topic'} Topic:
+        .col-md-5
+          = f.text_field :topic, class: "form-control"
+
+
+      .form-group
+        %label.control-label.col-md-1{for: 'question_body'} Question:
+        .col-md-5
+          = f.text_area :body, class: "form-control"
+
+
+      .form-group
+        .col-md-11.col-md-offset-1
+          = f.submit value: 'Ask', class: 'btn btn-default'

@@ -1,0 +1,11 @@
+.row
+  .col-md-12
+    %h2 Ask a Question:
+    %a.btn.btn-default{href: new_question_path} Ask Away
+    %h4 Number of Questions asked: #{@questions.total}
+    %h3 All Questions:
+    - @questions.each do |question|
+      %h4 Topic:
+      = question.topic
+      %h4 Question:
+      = question.body
