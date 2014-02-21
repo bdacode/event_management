@@ -5,9 +5,9 @@ class Attendance < ActiveRecord::Base
 
   after_destroy :update_event_waitlist
 
-  scope :confirmed, -> {where("NOT waitlisted or waitlisted is NULL")}
+  scope :confirmed, -> {where("NOT attendances.waitlisted or attendances.waitlisted is NULL")}
 
-  scope :waiting, -> {where("waitlisted").order('created_at ASC')}
+  scope :waitlisted, -> {where("attendances.waitlisted").order('created_at ASC')}
 
   # TODO: refactor: move to service object
   def change_waitlist_to_attending

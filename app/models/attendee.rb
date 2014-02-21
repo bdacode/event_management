@@ -8,20 +8,11 @@ class Attendee < ActiveRecord::Base
   validates :email, presence: true
   validates :email, uniqueness: true
 
-
   def confirmed_events
-    Event.joins(:attendances).where("attendances.id in (?)", confirmed.ids)
+    events.merge(Attendance.confirmed)
   end
 
   def waitlisted_events
-    Event.joins(:attendances).where("attendances.id in (?)", wait_listed.ids)
-  end
-
-  def confirmed
-    self.attendances.confirmed
-  end
-
-  def wait_listed
-    self.attendances.waiting
+    events.merge(Attendance.waitlisted)
   end
 end

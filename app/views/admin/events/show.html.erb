@@ -7,8 +7,8 @@
         <p><strong>Total Capacity: </strong><%= @event.seats %></p>
 
           <% if @event.attendees && @event.seats %>
-              <p><strong>Total Confirmed: </strong><%= @event.seat_ownerships.length %>
-              <p><strong>Total Seats Remaining: </strong><%= @event.seats - @event.seat_ownerships.length%>
+              <p><strong>Total Confirmed: </strong><%= @event.confirmed_spots %>
+              <p><strong>Total Seats Remaining: </strong><%= @event.available_spots%>
             <% else %>
               <p><strong>&nbsp;</strong>
               <p><strong>&nbsp;</strong>
@@ -17,7 +17,7 @@
         <p><strong>Body:</strong><%= @event.body %></p>
         <p><strong>Speaker:</strong><%= @event.speaker%></p>
         <p><strong>Speaker Bio:</strong><%= @event.bio %></p>
-        
+
         <p><strong>Linked-in Url:</strong>
             <% if (!@event.linkedin.blank?) %>
               <a href="<%=@event.linkedin%>">Profile</a>
@@ -38,7 +38,7 @@
     <p>  <% @event.confirmed_attendees.each do |attendee| %></p>
     <p>| <%= attendee.name %> | <%= attendee.email %> |</p>
           <% end %>
-     <p class="admin-titles upcase">   Total:  <%=@event.seat_ownerships.length%> </p>
+     <p class="admin-titles upcase">   Total:  <%=@event.confirmed_spots%> </p>
   </div>
 
 
